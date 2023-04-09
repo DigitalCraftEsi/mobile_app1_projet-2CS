@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mob1/UI/Screens/DrinkDoneScreen.dart';
 
 
 
@@ -12,6 +13,16 @@ class PaymentDoneScreen extends StatefulWidget {
 }
 
 class _MyAppState extends State<PaymentDoneScreen> {
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds: 8), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => DrinkDoneScreen()),
+      );
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     String _getDayOfWeek(int day) {
@@ -97,8 +108,8 @@ class _MyAppState extends State<PaymentDoneScreen> {
             child: Card(
               elevation: 3,
               child: SizedBox(
-                height: 550,
-                width: 350,
+                height: 700,
+                width: 500,
                 child: Center(
                   child: Container(
                     margin: const EdgeInsets.only(top: 30, bottom: 30),
@@ -109,14 +120,14 @@ class _MyAppState extends State<PaymentDoneScreen> {
                           margin: const EdgeInsets.only( bottom:30),
                           child: Image.asset(
                             "lib/UI/assets/images/img_2.png",
-                            height: 100,
-                            width: 100,
+                            height: 150,
+                            width: 150,
                           ),
                         ),
                         const Text(
                           "Payment processed",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Poppins',
                             color: Colors.black,
@@ -125,7 +136,7 @@ class _MyAppState extends State<PaymentDoneScreen> {
                         const Text(
                           "Your Drink will be ready in a moment",
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Poppins',
                             color: Colors.black,

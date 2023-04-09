@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mob1/Bloc/SugarQuantityBloc.dart';
+import 'package:mob1/UI/Screens/ProductScreen.dart';
 class ProductCard extends StatelessWidget {
   const ProductCard({Key? key, required this.img, required this.name, required this.Price}) : super(key: key);
   final String img;
@@ -12,7 +15,13 @@ class ProductCard extends StatelessWidget {
     return  InkWell(
 
       onTap: (){
-        print('jjj');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => BlocProvider(
+            create: (BuildContext context) =>SugarQuantityBloc(),
+            child:ProductScreen(),
+          ),),
+        );
       },
       child:
          Card(

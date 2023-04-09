@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:mob1/Bloc/BuyedProducts.dart';
+import 'package:provider/provider.dart';
 class BuyedProduct extends StatelessWidget {
   const BuyedProduct({Key? key, required this.name, required this.quantity, required this.Price, required this.image}) : super(key: key);
   final String name;
@@ -8,6 +10,7 @@ class BuyedProduct extends StatelessWidget {
   final String image;
   @override
   Widget build(BuildContext context) {
+    final buyedProducts = Provider.of<BuyedProducts>(context);
     var screenWidth=MediaQuery.of(context).size.width;
     var screenHeight=MediaQuery.of(context).size.height;
     return Container(
@@ -48,7 +51,9 @@ class BuyedProduct extends StatelessWidget {
               ),
               SizedBox(width: screenWidth/60,),
               InkWell(
-                onTap: (){},
+                onTap: (){
+                  buyedProducts.remove_Product();
+                },
                 child: Container(
                   margin: EdgeInsets.only(left: 7),
                   padding: EdgeInsets.all(1),

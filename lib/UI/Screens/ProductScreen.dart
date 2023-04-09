@@ -4,7 +4,10 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mob1/Bloc/BuyedProducts.dart';
 import 'package:mob1/Bloc/SugarQuantityBloc.dart';
+import 'package:mob1/UI/Screens/BuyingScreen.dart';
+import 'package:provider/provider.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({Key? key}) : super(key: key);
@@ -21,6 +24,7 @@ class _MyAppState extends State<ProductScreen> {
 
   Widget build(BuildContext context) {
     final  sugarQuantityBloc = BlocProvider.of<SugarQuantityBloc>(context);
+    final buyedProducts = Provider.of<BuyedProducts>(context);
     String _getDayOfWeek(int day) {
       switch (day) {
         case 1:
@@ -104,15 +108,15 @@ class _MyAppState extends State<ProductScreen> {
               child: Card(
                 elevation: 3,
                 child: SizedBox(
-                  height: 550,
-                  width: 350,
+                  height: 700,
+                  width: 500,
                   child: Center(
                     child: Container(
                       margin: const EdgeInsets.only(top: 30, bottom: 30),
                       child: Column(
                         children: <Widget>[
                           Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 Image.asset(
                                   "lib/UI/assets/images/img.png",
@@ -152,7 +156,7 @@ class _MyAppState extends State<ProductScreen> {
                           Container(
                             alignment: Alignment.center,
                             margin: const EdgeInsets.only(
-                                top: 10, right: 20, left: 20, bottom: 10),
+                                top: 50, right: 70, left: 70, bottom: 30),
                             child: const Text(
                               "Lorem ipsum dolor sit amet constur Fringilla enim vitae sed vitae eget. Vel vel cras bibendum lectus scelerisque. ",
                               style: TextStyle(
@@ -171,29 +175,36 @@ class _MyAppState extends State<ProductScreen> {
                                 const Text(
                                   "Sugar:",
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     fontFamily: 'Poppins',
                                     color: Colors.black,
                                   ),
                                 ),
-                                Slider(
-                                  value: _currentSliderValue,
-                                  max: 5,
-                                  divisions: 5,
-                                  activeColor:
-                                  const Color.fromARGB(255, 33, 130, 97),
-                                  inactiveColor:
-                                  const Color.fromARGB(130, 51, 51, 51),
-                                  label: _currentSliderValue.round().toString(),
-                                  onChanged: (double value) {
-                                    setState(() {
-                                      _currentSliderValue = value;
-                                    });
-                                  },
-                                ),
+    BlocBuilder<SugarQuantityBloc,int>(
+    builder:(BuildContext context,int sugarQuantity){
+      return Slider(
+        value: sugarQuantity.toDouble(),
+        max: 5,
+        divisions: 5,
+        activeColor:
+        const Color.fromARGB(255, 33, 130, 97),
+        inactiveColor:
+        const Color.fromARGB(130, 51, 51, 51),
+        label: _currentSliderValue.round().toString(),
+        onChanged: (double value) {
+          setState(() {
+            _currentSliderValue = value;
+          });
+        },
+      );
+    }),
+
                               ],
                             ),
+                          ),
+                          SizedBox(
+                            height: 10,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -201,7 +212,7 @@ class _MyAppState extends State<ProductScreen> {
                               const Text(
                                 "Quantity:",
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   fontFamily: 'Poppins',
                                   color: Colors.black,
@@ -217,22 +228,27 @@ class _MyAppState extends State<ProductScreen> {
                                   mainAxisAlignment:
                                   MainAxisAlignment.spaceBetween,
                                   children: [
-                                    FloatingActionButton(
-                                      mini: true,
-                                      backgroundColor:
-                                      const Color.fromARGB(200, 33, 130, 97),
-                                      onPressed: (){
-                                        sugarQuantityBloc.add(SugarQuantityEvents.onDecreaseSugar);
-                                      },
+                                  BlocBuilder<SugarQuantityBloc,int>(
+    builder:(BuildContext context,int sugarQuantity){
+      return   FloatingActionButton(
+        mini: true,
+        backgroundColor:
+        const Color.fromARGB(200, 33, 130, 97),
+        onPressed: sugarQuantity==0?null:(){
+          sugarQuantityBloc.add(SugarQuantityEvents.onDecreaseSugar);
+        },
 
-                                      child: const Icon(Icons.remove),
-                                    ),
+        child: const Icon(Icons.remove),
+      );
+    }),
+                           
+                                    SizedBox(width: 20,),
                                     BlocBuilder<SugarQuantityBloc,int>(
                                         builder:(BuildContext context,int sugarQuantity){
                                           return  Text(
                                             '$sugarQuantity',
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.w700,
                                               fontFamily: 'Poppins',
                                               color: Colors.black,
@@ -240,23 +256,27 @@ class _MyAppState extends State<ProductScreen> {
                                           );
                                         },
                                     ),
+                                    SizedBox(width: 20,),
+    BlocBuilder<SugarQuantityBloc,int>(
+    builder:(BuildContext context,int sugarQuantity){
+      return FloatingActionButton(
+        mini: true,
+        backgroundColor:
+        const Color.fromARGB(200, 33, 130, 97),
+        onPressed: sugarQuantity==5?null:(){
+          sugarQuantityBloc.add(SugarQuantityEvents.onAddSugarEvent);
+        },
+        child: const Icon(Icons.add),
+      );
+    }),
 
-                                    FloatingActionButton(
-                                      mini: true,
-                                      backgroundColor:
-                                      const Color.fromARGB(200, 33, 130, 97),
-                                      onPressed: (){
-                                        sugarQuantityBloc.add(SugarQuantityEvents.onAddSugarEvent);
-                                      },
-                                      child: const Icon(Icons.add),
-                                    ),
                                   ],
                                 ),
                               )
                             ],
                           ),
                           Container(
-                              margin: const EdgeInsets.only(top: 30),
+                              margin: const EdgeInsets.only(top: 120),
                               alignment: Alignment.center,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -269,13 +289,18 @@ class _MyAppState extends State<ProductScreen> {
                                           bottomRight: Radius.circular(10.0)),
                                     ),
                                     child: SizedBox(
-                                      width: 150,
+                                      width: 200,
                                       child: FlatButton(
-                                        onPressed: (){},
+                                        onPressed: (){
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => BuyingScreen()),
+                                          );
+                                        },
                                         child: const Text(
                                           'CANCEL',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'Poppins',
                                             color: Colors.white,
@@ -292,13 +317,19 @@ class _MyAppState extends State<ProductScreen> {
                                           bottomLeft: Radius.circular(10.0)),
                                     ),
                                     child: SizedBox(
-                                      width: 150,
+                                      width: 200,
                                       child: FlatButton(
-                                        onPressed: (){},
+                                        onPressed: (){
+                                          buyedProducts.add_Product();
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => BuyingScreen()),
+                                          );
+                                        },
                                         child: const Text(
                                           'ADD TO CART',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'Poppins',
                                             color: Colors.white,

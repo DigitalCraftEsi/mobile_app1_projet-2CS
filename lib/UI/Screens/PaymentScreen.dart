@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mob1/UI/Screens/PaymentDoneScreen.dart';
 
 
 
@@ -12,6 +13,16 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _MyAppState extends State<PaymentScreen> {
+   @override
+  void initState() {
+    Future.delayed(Duration(seconds: 5), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PaymentDoneScreen()),
+      );
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     String _getDayOfWeek(int day) {
@@ -44,7 +55,7 @@ class _MyAppState extends State<PaymentScreen> {
 
     return  Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 33, 130, 97),
+          backgroundColor: Color.fromRGBO(1, 113, 75, 1),
           flexibleSpace: SafeArea(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -97,8 +108,8 @@ class _MyAppState extends State<PaymentScreen> {
             child: Card(
               elevation: 3,
               child: SizedBox(
-                height: 550,
-                width: 350,
+                height: 700,
+                width: 500,
                 child: Center(
                   child: Container(
                     margin: const EdgeInsets.only(top: 30, bottom: 30),
@@ -107,28 +118,28 @@ class _MyAppState extends State<PaymentScreen> {
                         const Text(
                           "Scan the code to pay",
                           style: TextStyle(
-                            fontSize: 25,
+                            fontSize: 28,
                             fontWeight: FontWeight.w800,
                             fontFamily: 'Poppins',
                             color: Color.fromARGB(255, 33, 130, 97),
                           ),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(top: 20),
+                          margin: const EdgeInsets.only(top: 50),
                           child: Image.asset(
                             "lib/UI/assets/images/img_1.png",
-                            height: 170,
-                            width: 170,
+                            height: 190,
+                            width: 190,
                           ),
                         ),
                         Container(
                           alignment: Alignment.centerLeft,
                           margin: const EdgeInsets.only(
-                              top: 20, bottom: 20,left:35),
+                              top: 50, bottom: 20,left:90),
                           child: const Text(
                             "How to Pay Merchants",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                               fontFamily: 'Poppins',
                               color: Color.fromARGB(255, 33, 130, 97),
@@ -160,7 +171,7 @@ class _MyAppState extends State<PaymentScreen> {
                                 const Text(
                                   "Find the QR Code",
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
                                     color: Colors.black,
@@ -171,7 +182,7 @@ class _MyAppState extends State<PaymentScreen> {
                                   child: const Text(
                                     "After Finalizing  your command , the vending machine will display a QR code",
                                     style: TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'Poppins',
                                       color: Colors.black,
@@ -183,7 +194,7 @@ class _MyAppState extends State<PaymentScreen> {
                           ],
                         ),
                         const SizedBox(
-                          height:12,
+                          height:20,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -210,7 +221,7 @@ class _MyAppState extends State<PaymentScreen> {
                                 const Text(
                                   "Scan QR Code to Pay",
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
                                     color: Colors.black,
@@ -221,7 +232,7 @@ class _MyAppState extends State<PaymentScreen> {
                                   child: const Text(
                                     "Tap Pay in the SmartBev app to start scanning.",
                                     style: TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'Poppins',
                                       color: Colors.black,
@@ -233,7 +244,7 @@ class _MyAppState extends State<PaymentScreen> {
                           ],
                         ),
                         const SizedBox(
-                          height:14,
+                          height:20,
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,7 +271,7 @@ class _MyAppState extends State<PaymentScreen> {
                                 const Text(
                                   "Get your Drinks",
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: 'Poppins',
                                     color: Colors.black,
@@ -271,7 +282,7 @@ class _MyAppState extends State<PaymentScreen> {
                                   child: const Text(
                                     "Ensure that the payment is done and get your drinks",
                                     style: TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'Poppins',
                                       color: Colors.black,

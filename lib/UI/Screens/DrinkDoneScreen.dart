@@ -44,7 +44,7 @@ class _MyAppState extends State<DrinkDoneScreen> {
 
     return  Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 33, 130, 97),
+          backgroundColor: Color.fromRGBO(1, 113, 75, 1),
           flexibleSpace: SafeArea(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -97,8 +97,8 @@ class _MyAppState extends State<DrinkDoneScreen> {
             child: Card(
               elevation: 3,
               child: SizedBox(
-                height: 550,
-                width: 350,
+                height: 700,
+                width: 500,
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +106,7 @@ class _MyAppState extends State<DrinkDoneScreen> {
                       const  Text(
                         "Enjoy your drink !",
                         style: TextStyle(
-                          fontSize: 25,
+                          fontSize: 29,
                           fontWeight: FontWeight.w800,
                           fontFamily: 'Poppins',
                           color: Color.fromARGB(255, 33, 130, 97),
@@ -114,13 +114,13 @@ class _MyAppState extends State<DrinkDoneScreen> {
                       ),
                       Image.asset(
                         "lib/UI/assets/images/img_3.png",
-                        height: 300,
-                        width: 300,
+                        height: 400,
+                        width: 400,
                       ),
                       const Text(
                         '"SmartBev, your personalized hot drink solution"',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Poppins',
                           color: Colors.black,
