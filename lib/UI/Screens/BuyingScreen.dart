@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
+import 'package:mob1/Bloc/Drinks.dart';
+import 'package:mob1/Bloc/QrCodeBloc.dart';
+import 'package:mob1/Data/Models/Drink.dart';
 import 'package:mob1/UI/Screens/PaymentScreen.dart';
 import 'package:mob1/UI/widjets/BuyedProduct.dart';
 import 'package:mob1/UI/widjets/ProductCard.dart';
@@ -23,6 +26,11 @@ class _BuyingScreenState extends State<BuyingScreen> {
 
   );
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+  @override
   void dispose() {
     controller.dispose();
     super.dispose();
@@ -30,72 +38,46 @@ class _BuyingScreenState extends State<BuyingScreen> {
   int currentCard=0;
   @override
   Widget build(BuildContext context) {
-    final buyedProducts = Provider.of<BuyedProducts>(context);
+    List<Drink> ListDrinks=Provider.of<Drinks>(context,listen: true).list;
+    List<Product> buyedProductsList= Provider.of<BuyedProducts>(context,listen: true).list;
+     int Total=0;
+     buyedProductsList.forEach((element) {
+       Drink  _drink=Provider.of<Drinks>(context,listen: true).getDrink(element.idBoisson);
+       Total=Total+element.quantity*_drink.tarif;
+     });
     var screenWidth=MediaQuery.of(context).size.width;
     var screenHeight=MediaQuery.of(context).size.height;
-    List<Widget> _listOfCards=<Widget>[
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 0,horizontal: screenWidth/30),
+    int chunkSize = 9;
+    List<List<Drink>> chunks = [];
 
-        child: GridView(
+    for (var i = 0; i < ListDrinks.length; i += chunkSize) {
+      int endIndex = i + chunkSize;
+      if (endIndex > ListDrinks.length) {
+        endIndex = ListDrinks.length;
+      }
+      chunks.add(ListDrinks.sublist(i, endIndex));
+    }
+    List<Widget> _listOfCards=List.generate(chunks.length, (index) => Container(
+      padding: EdgeInsets.symmetric(vertical: 0,horizontal: screenWidth/30),
+
+      child: GridView(
 
 
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          children:[
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-          ],
-          padding: EdgeInsets.symmetric(
-              horizontal: screenWidth/9, vertical: screenHeight/37),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        children: chunks[index].map((e) => ProductCard(id:e.IdBoisson,img: 'lib/UI/assets/images/cappochino.png', name: e.nomBoisson, Price: e.tarif)).toList(),
+        padding: EdgeInsets.symmetric(
+            horizontal: screenWidth/9, vertical: screenHeight/37),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
 
-            crossAxisCount: 3,
-            childAspectRatio: 0.75,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 10,
-          ),
+          crossAxisCount: 3,
+          childAspectRatio: 0.75,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 10,
         ),
       ),
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 0,horizontal: screenWidth/30),
+    ));
 
-        child: GridView(
-
-
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          children:[
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-            ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-          ],
-          padding: EdgeInsets.symmetric(
-              horizontal: screenWidth/9, vertical: screenHeight/37),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-
-            crossAxisCount: 3,
-            childAspectRatio: 0.75,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 10,
-          ),
-        ),
-      ),
-
-    ];
     var date=DateTime.now();
     var today= DateFormat('EEEE').format(date);
     var todayDate=DateFormat('dd-MM-yyyy').format(date);
@@ -107,7 +89,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
     if(minute.length==1){
       minute='0'+minute;
     }
-    int total=120;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -208,7 +190,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
                             ),
                             Row(
                               children: [
-                                Text("TOTAL : ${buyedProducts.total_Price()} DA",style: TextStyle(fontWeight: FontWeight.w800,fontSize: screenWidth/23,color: Colors.white),),
+                                Text("TOTAL : $Total DA",style: TextStyle(fontWeight: FontWeight.w800,fontSize: screenWidth/23,color: Colors.white),),
 
                               ],
                             ),
@@ -219,7 +201,10 @@ class _BuyingScreenState extends State<BuyingScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                            mainAxisAlignment: MainAxisAlignment.start,
-                         children: buyedProducts.list.map((Product product) =>  BuyedProduct(name: product.name, quantity: product.quantity, Price: product.price, image: product.image),).toList(),
+                         children: buyedProductsList.map((Product product) {
+                           Drink  _drink=Provider.of<Drinks>(context,listen: true).getDrink(product.idBoisson);
+                           return BuyedProduct(idBoisson: _drink.IdBoisson,name: _drink.nomBoisson, quantity: product.quantity, Price: _drink.tarif, image:"lib/UI/assets/images/cappochino.png" );
+                         }).toList(),
                         ),
                       ),
                       Row(
@@ -231,7 +216,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
                             ),
                             padding: EdgeInsets.symmetric(horizontal: screenWidth/16,vertical: screenHeight/100),
                             onPressed: (){
-                              buyedProducts.initialise_List();
+                              Provider.of<BuyedProducts>(context,listen: false).initialise_List();
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(builder: (context) => MyHomePage()),
@@ -246,9 +231,11 @@ class _BuyingScreenState extends State<BuyingScreen> {
                             ),
                             padding: EdgeInsets.symmetric(horizontal: screenWidth/20,vertical: screenHeight/100),
                             onPressed: (){
+                              Provider.of<QrCodeBloc>(context,listen: false).EncodeData(buyedProductsList);
+                              String _dataEncoded=Provider.of<QrCodeBloc>(context,listen: false).Dataencoded;
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => PaymentScreen()),
+                                MaterialPageRoute(builder: (context) => PaymentScreen(dataEncoded: _dataEncoded,)),
                               );
                             },
                             child: Text("PAY NOW",style: TextStyle(letterSpacing: 1,fontWeight: FontWeight.w800,fontSize: screenWidth/24,color: Color.fromRGBO(1, 113, 75, 1)),),

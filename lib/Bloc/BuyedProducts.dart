@@ -1,16 +1,18 @@
 import 'package:flutter/foundation.dart';
+import 'package:mob1/Data/Models/Drink.dart';
 
 class BuyedProducts extends ChangeNotifier {
   List<Product> _listOfBuyedProducts=[];
 
   List<Product> get list => _listOfBuyedProducts;
 
-  void add_Product() {
-    _listOfBuyedProducts.add(Product("lib/UI/assets/images/cappochino.png", "Cappuchino", 1, 60));
+  void add_Product(int idBoisson,int quantity) {
+    _listOfBuyedProducts.add(Product(idBoisson: idBoisson,quantity: quantity));
     notifyListeners();
   }
-  void remove_Product() {
-    _listOfBuyedProducts.removeAt(_listOfBuyedProducts.length-1);
+  void remove_Product(int idBoisson) {
+    print(_listOfBuyedProducts);
+    _listOfBuyedProducts.removeWhere((element) => element.idBoisson==idBoisson);
     notifyListeners();
   }
   void initialise_List(){
@@ -20,16 +22,14 @@ class BuyedProducts extends ChangeNotifier {
   int total_Price(){
     int total=0;
     for(int i=0;i<_listOfBuyedProducts.length;i++){
-      total=total+_listOfBuyedProducts[i].price;
+      total=total+60;
     }
     return total;
   }
 }
 class Product{
-  final String image;
-  final String name;
+  final int idBoisson;
   final int quantity;
-  final int price;
 
-  Product(this.image, this.name, this.quantity, this.price);
+  Product({required this.idBoisson,required this.quantity});
 }

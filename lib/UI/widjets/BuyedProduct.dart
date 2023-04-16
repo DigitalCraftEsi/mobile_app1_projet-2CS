@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
 import 'package:provider/provider.dart';
 class BuyedProduct extends StatelessWidget {
-  const BuyedProduct({Key? key, required this.name, required this.quantity, required this.Price, required this.image}) : super(key: key);
+  const BuyedProduct({Key? key, required this.name, required this.quantity, required this.Price, required this.image, required this.idBoisson}) : super(key: key);
+  final int idBoisson;
   final String name;
   final int quantity;
   final int Price;
   final String image;
   @override
   Widget build(BuildContext context) {
-    final buyedProducts = Provider.of<BuyedProducts>(context);
+   
     var screenWidth=MediaQuery.of(context).size.width;
     var screenHeight=MediaQuery.of(context).size.height;
     return Container(
@@ -42,7 +43,7 @@ class BuyedProduct extends StatelessWidget {
                             color: Color.fromRGBO(1, 113, 75, 1),
                             borderRadius: BorderRadius.all(Radius.circular(20))
                         ),
-                        child: Text('$Price DA',style: TextStyle(fontSize: screenWidth/40,fontWeight: FontWeight.w700,color: Colors.white),),
+                        child: Text('${Price*quantity} DA',style: TextStyle(fontSize: screenWidth/40,fontWeight: FontWeight.w700,color: Colors.white),),
                       ),
 
                     ],
@@ -52,7 +53,7 @@ class BuyedProduct extends StatelessWidget {
               SizedBox(width: screenWidth/60,),
               InkWell(
                 onTap: (){
-                  buyedProducts.remove_Product();
+                  Provider.of<BuyedProducts>(context,listen: false).remove_Product(idBoisson);
                 },
                 child: Container(
                   margin: EdgeInsets.only(left: 7),

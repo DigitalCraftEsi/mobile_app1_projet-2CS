@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mob1/Bloc/SugarQuantityBloc.dart';
 import 'package:mob1/UI/Screens/ProductScreen.dart';
 class ProductCard extends StatelessWidget {
-  const ProductCard({Key? key, required this.img, required this.name, required this.Price}) : super(key: key);
+  const ProductCard({Key? key, required this.img, required this.name, required this.Price, required this.id}) : super(key: key);
+  final int id;
   final String img;
   final String name;
   final int Price;
@@ -17,10 +17,8 @@ class ProductCard extends StatelessWidget {
       onTap: (){
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => BlocProvider(
-            create: (BuildContext context) =>SugarQuantityBloc(),
-            child:ProductScreen(),
-          ),),
+          MaterialPageRoute(builder: (context) => ProductScreen(id: this.id,),
+          ),
         );
       },
       child:

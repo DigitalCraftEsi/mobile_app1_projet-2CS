@@ -5,25 +5,33 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
-import 'package:mob1/Bloc/SugarQuantityBloc.dart';
+import 'package:mob1/Bloc/Drinks.dart';
+import 'package:mob1/Data/Models/Drink.dart';
 import 'package:mob1/UI/Screens/BuyingScreen.dart';
 import 'package:provider/provider.dart';
 
 class ProductScreen extends StatefulWidget {
-  const ProductScreen({Key? key}) : super(key: key);
-
+  const ProductScreen({Key? key, required this.id}) : super(key: key);
+  final int id;
   @override
   State<ProductScreen> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<ProductScreen> {
-  double _currentSliderValue = 2;
+  double _currentSliderValue = 1;
+  int Productquantity=1;
 
+@override
+  void initState() {
+    // TODO: implement initState
 
+    super.initState();
+  }
   @override
 
   Widget build(BuildContext context) {
-    final  sugarQuantityBloc = BlocProvider.of<SugarQuantityBloc>(context);
+    Drink  _drink=Provider.of<Drinks>(context,listen: true).getDrink(widget.id);
+
     final buyedProducts = Provider.of<BuyedProducts>(context);
     String _getDayOfWeek(int day) {
       switch (day) {
@@ -124,8 +132,8 @@ class _MyAppState extends State<ProductScreen> {
                                   width: 150,
                                 ),
                                 Column(children: <Widget>[
-                                  const Text(
-                                    "Cappuccino",
+                                  Text(
+                                    "${_drink.nomBoisson}",
                                     style: TextStyle(
                                       fontSize: 27,
                                       fontWeight: FontWeight.w800,
@@ -141,8 +149,8 @@ class _MyAppState extends State<ProductScreen> {
                                         color: Color.fromARGB(255, 33, 130, 97),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10))),
-                                    child: const Text(
-                                      "60 DA",
+                                    child:  Text(
+                                      "${_drink.tarif} DA",
                                       style: TextStyle(
                                         fontSize: 27,
                                         fontWeight: FontWeight.w800,
@@ -181,10 +189,8 @@ class _MyAppState extends State<ProductScreen> {
                                     color: Colors.black,
                                   ),
                                 ),
-    BlocBuilder<SugarQuantityBloc,int>(
-    builder:(BuildContext context,int sugarQuantity){
-      return Slider(
-        value: sugarQuantity.toDouble(),
+       Slider(
+        value: _currentSliderValue,
         max: 5,
         divisions: 5,
         activeColor:
@@ -197,8 +203,8 @@ class _MyAppState extends State<ProductScreen> {
             _currentSliderValue = value;
           });
         },
-      );
-    }),
+      ),
+
 
                               ],
                             ),
@@ -228,47 +234,49 @@ class _MyAppState extends State<ProductScreen> {
                                   mainAxisAlignment:
                                   MainAxisAlignment.spaceBetween,
                                   children: [
-                                  BlocBuilder<SugarQuantityBloc,int>(
-    builder:(BuildContext context,int sugarQuantity){
-      return   FloatingActionButton(
+
+       FloatingActionButton(
+         heroTag: "bt1",
         mini: true,
         backgroundColor:
         const Color.fromARGB(200, 33, 130, 97),
-        onPressed: sugarQuantity==0?null:(){
-          sugarQuantityBloc.add(SugarQuantityEvents.onDecreaseSugar);
+        onPressed: Productquantity==0?null:(){
+          setState(() {
+            Productquantity=Productquantity-1;
+          });
         },
 
         child: const Icon(Icons.remove),
-      );
-    }),
+      ),
+
                            
                                     SizedBox(width: 20,),
-                                    BlocBuilder<SugarQuantityBloc,int>(
-                                        builder:(BuildContext context,int sugarQuantity){
-                                          return  Text(
-                                            '$sugarQuantity',
+
+                                           Text(
+                                            '$Productquantity',
                                             style: const TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w700,
                                               fontFamily: 'Poppins',
                                               color: Colors.black,
                                             ),
-                                          );
-                                        },
-                                    ),
+                                          ),
+
+
                                     SizedBox(width: 20,),
-    BlocBuilder<SugarQuantityBloc,int>(
-    builder:(BuildContext context,int sugarQuantity){
-      return FloatingActionButton(
+
+       FloatingActionButton(
+         heroTag: "bt2",
         mini: true,
         backgroundColor:
         const Color.fromARGB(200, 33, 130, 97),
-        onPressed: sugarQuantity==5?null:(){
-          sugarQuantityBloc.add(SugarQuantityEvents.onAddSugarEvent);
+        onPressed: (){
+         setState(() {
+           Productquantity=Productquantity+1;
+         });
         },
         child: const Icon(Icons.add),
-      );
-    }),
+      ),
 
                                   ],
                                 ),
@@ -320,7 +328,7 @@ class _MyAppState extends State<ProductScreen> {
                                       width: 200,
                                       child: FlatButton(
                                         onPressed: (){
-                                          buyedProducts.add_Product();
+                                          buyedProducts.add_Product(widget.id,Productquantity);
                                           Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(builder: (context) => BuyingScreen()),

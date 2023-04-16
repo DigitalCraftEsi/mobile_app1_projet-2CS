@@ -1,20 +1,23 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mob1/Bloc/BuyedProducts.dart';
+import 'package:mob1/Bloc/QrCodeBloc.dart';
 import 'package:mob1/UI/Screens/PaymentDoneScreen.dart';
-
+import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
-
+  const PaymentScreen({Key? key, required this.dataEncoded}) : super(key: key);
+  final String dataEncoded;
   @override
   State<PaymentScreen> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<PaymentScreen> {
    @override
-  void initState() {
+ /* void initState() {
     Future.delayed(Duration(seconds: 5), () {
       Navigator.pushReplacement(
         context,
@@ -22,7 +25,7 @@ class _MyAppState extends State<PaymentScreen> {
       );
     });
     super.initState();
-  }
+  }*/
   @override
   Widget build(BuildContext context) {
     String _getDayOfWeek(int day) {
@@ -124,14 +127,15 @@ class _MyAppState extends State<PaymentScreen> {
                             color: Color.fromARGB(255, 33, 130, 97),
                           ),
                         ),
-                        Container(
+                      /*  Container(
                           margin: const EdgeInsets.only(top: 50),
                           child: Image.asset(
                             "lib/UI/assets/images/img_1.png",
                             height: 190,
                             width: 190,
                           ),
-                        ),
+                        ),*/
+                        QrImage(data: widget.dataEncoded,size: 190,),
                         Container(
                           alignment: Alignment.centerLeft,
                           margin: const EdgeInsets.only(

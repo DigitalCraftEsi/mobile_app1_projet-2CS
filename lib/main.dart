@@ -5,19 +5,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
+import 'package:mob1/Bloc/Drinks.dart';
+import 'package:mob1/Bloc/QrCodeBloc.dart';
+import 'package:mob1/Data/Services/DrinksService.dart';
 import 'package:mob1/UI/Screens/BuyingScreen.dart';
 import 'package:mob1/UI/Screens/DrinkDoneScreen.dart';
 import 'package:mob1/UI/Screens/PaymentDoneScreen.dart';
 import 'package:provider/provider.dart';
-
-import 'Bloc/SugarQuantityBloc.dart';
+import 'Data/Models/Drink.dart';
 import 'UI/Screens/PaymentScreen.dart';
 import 'UI/Screens/ProductScreen.dart';
 import 'UI/widjets/ProductCard.dart';
 import 'package:flutter/services.dart';
 void main() {
-  runApp(ChangeNotifierProvider(create: (_)=>BuyedProducts(),
-  child: MyApp(),
+  runApp(MultiProvider(child:MyApp(),
+    providers: [
+      ChangeNotifierProvider<BuyedProducts>.value(value: BuyedProducts()),
+      ChangeNotifierProvider<Drinks>.value(value: Drinks()),
+      ChangeNotifierProvider<QrCodeBloc>.value(value: QrCodeBloc()),
+
+    ],
   ));
 }
 
@@ -32,10 +39,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'mob1',
       theme: ThemeData(fontFamily: 'Poppins'),
-      home:BlocProvider(
-      create: (BuildContext context) =>SugarQuantityBloc(),
-    child:MyHomePage(),
-      ),
+      home:MyHomePage(),
+
       debugShowCheckedModeBanner: false,
     );
   }
@@ -55,6 +60,19 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController controller=PageController(initialPage: 0,
 
   );
+  bool isloading=true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    Provider.of<Drinks>(context,listen: false).LoadDrinks().then((value){
+      setState(() {
+       isloading=false;
+      });
+    });
+
+
+    super.initState();
+  }
   @override
   void dispose() {
     controller.dispose();
@@ -65,95 +83,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Drink> ListDrinks=Provider.of<Drinks>(context,listen: false).list;
    var screenWidth=MediaQuery.of(context).size.width;
    var screenHeight=MediaQuery.of(context).size.height;
-   List<Widget> _listOfCards=<Widget>[
-     Container(
-       padding: EdgeInsets.symmetric(vertical: 0,horizontal: screenWidth/30),
+    int chunkSize = 6;
+    List<List<Drink>> chunks = [];
 
-       child: GridView(
+    for (var i = 0; i < ListDrinks.length; i += chunkSize) {
+      int endIndex = i + chunkSize;
+      if (endIndex > ListDrinks.length) {
+        endIndex = ListDrinks.length;
+      }
+      chunks.add(ListDrinks.sublist(i, endIndex));
+    }
+    List<Widget> _listOfCards=List.generate(chunks.length, (index) => Container(
+      padding: EdgeInsets.symmetric(vertical: 0,horizontal: screenWidth/30),
 
-
-         physics: NeverScrollableScrollPhysics(),
-         shrinkWrap: true,
-         children:[
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-
-         ],
-         padding: EdgeInsets.symmetric(
-             horizontal: screenWidth/9, vertical: screenHeight/37),
-         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-
-           crossAxisCount: 3,
-           childAspectRatio: 0.75,
-           crossAxisSpacing: 5,
-           mainAxisSpacing: 10,
-         ),
-       ),
-     ),
-     Container(
-       padding: EdgeInsets.symmetric(vertical: 0,horizontal: screenWidth/30),
-
-       child: GridView(
+      child: GridView(
 
 
-         physics: NeverScrollableScrollPhysics(),
-         shrinkWrap: true,
-         children:[
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        children: chunks[index].map((e) => ProductCard(id: e.IdBoisson,img: 'lib/UI/assets/images/cappochino.png', name: e.nomBoisson, Price: e.tarif)).toList(),
+        padding: EdgeInsets.symmetric(
+            horizontal: screenWidth/9, vertical: screenHeight/37),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
 
-         ],
-         padding: EdgeInsets.symmetric(
-             horizontal: screenWidth/9, vertical: screenHeight/37),
-         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-
-           crossAxisCount: 3,
-           childAspectRatio: 0.75,
-           crossAxisSpacing: 5,
-           mainAxisSpacing: 10,
-         ),
-       ),
-     ),
-     Container(
-       padding: EdgeInsets.symmetric(vertical: 0,horizontal: screenWidth/30),
-
-       child: GridView(
+          crossAxisCount: 3,
+          childAspectRatio: 0.75,
+          crossAxisSpacing: 5,
+          mainAxisSpacing: 10,
+        ),
+      ),
+    ));
 
 
-         physics: NeverScrollableScrollPhysics(),
-         shrinkWrap: true,
-         children:[
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-           ProductCard(img: 'lib/UI/assets/images/cappochino.png', name: 'Cappuccino', Price: 60),
-
-         ],
-         padding: EdgeInsets.symmetric(
-             horizontal: screenWidth/9, vertical: screenHeight/37),
-         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-
-           crossAxisCount: 3,
-           childAspectRatio: 0.75,
-           crossAxisSpacing: 5,
-           mainAxisSpacing: 10,
-         ),
-       ),
-     ),
-
-   ];
    var date=DateTime.now();
    var today= DateFormat('EEEE').format(date);
    var todayDate=DateFormat('dd-MM-yyyy').format(date);
@@ -195,7 +159,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Column(
+      body: isloading?Center(
+          child: CircularProgressIndicator(
+            color: Color.fromRGBO(1, 113, 75, 1),
+            strokeWidth: 6,
+          )):Column(
          crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -263,6 +231,8 @@ class _MyHomePageState extends State<MyHomePage> {
                  context,
                  MaterialPageRoute(builder: (context) => BuyingScreen()),
                );
+               print(ListDrinks);
+               print(chunks);
              },
              child: Stack(
                alignment: Alignment.bottomCenter,
