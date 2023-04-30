@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,19 +9,23 @@ import 'package:intl/intl.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
 import 'package:mob1/Bloc/Drinks.dart';
 import 'package:mob1/Bloc/QrCodeBloc.dart';
+import 'package:mob1/Bloc/SocketIoBloc.dart';
 import 'package:mob1/Data/Services/DrinksService.dart';
 import 'package:mob1/UI/Screens/BuyingScreen.dart';
 import 'package:mob1/UI/Screens/DrinkDoneScreen.dart';
 import 'package:mob1/UI/Screens/PaymentDoneScreen.dart';
 import 'package:provider/provider.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 import 'Data/Models/Drink.dart';
 import 'UI/Screens/PaymentScreen.dart';
 import 'UI/Screens/ProductScreen.dart';
 import 'UI/widjets/ProductCard.dart';
 import 'package:flutter/services.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 void main() {
   runApp(MultiProvider(child:MyApp(),
     providers: [
+      ChangeNotifierProvider<SocketIoBloc>.value(value: SocketIoBloc()..connectToMachine()),
       ChangeNotifierProvider<BuyedProducts>.value(value: BuyedProducts()),
       ChangeNotifierProvider<Drinks>.value(value: Drinks()),
       ChangeNotifierProvider<QrCodeBloc>.value(value: QrCodeBloc()),
@@ -61,17 +67,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
   );
   bool isloading=true;
+
+
   @override
   void initState() {
     // TODO: implement initState
-    Provider.of<Drinks>(context,listen: false).LoadDrinks().then((value){
+    super.initState();
+    IO.Socket socket= Provider.of<SocketIoBloc>(context,listen: false).socket;
+    socket.on('idDistributeur', (data) {
+      print('received message: $data');
+      Provider.of<SocketIoBloc>(context,listen: false).setIdDistributeur(int.parse("${data["idDistributeur"]}"));
+
+      Provider.of<Drinks>(context,listen: false).LoadDrinks("232323").then((value){
+        setState(() {
+          isloading=false;
+        });
+      });
+    });
+    Provider.of<SocketIoBloc>(context,listen: false).onError();
+
+    print("4");
+    /*Provider.of<Drinks>(context,listen: false).LoadDrinks().then((value){
       setState(() {
        isloading=false;
       });
-    });
+    });*/
 
 
-    super.initState();
+
   }
   @override
   void dispose() {

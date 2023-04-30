@@ -7,7 +7,7 @@ class BuyedProduct extends StatelessWidget {
   final int idBoisson;
   final String name;
   final int quantity;
-  final int Price;
+  final double Price;
   final String image;
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class BuyedProduct extends StatelessWidget {
                             color: Color.fromRGBO(1, 113, 75, 1),
                             borderRadius: BorderRadius.all(Radius.circular(20))
                         ),
-                        child: Text('${Price*quantity} DA',style: TextStyle(fontSize: screenWidth/40,fontWeight: FontWeight.w700,color: Colors.white),),
+                        child: Text('${(Price*quantity).toInt()} DA',style: TextStyle(fontSize: screenWidth/40,fontWeight: FontWeight.w700,color: Colors.white),),
                       ),
 
                     ],

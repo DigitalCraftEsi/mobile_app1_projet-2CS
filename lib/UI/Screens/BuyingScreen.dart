@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
 import 'package:mob1/Bloc/Drinks.dart';
 import 'package:mob1/Bloc/QrCodeBloc.dart';
+import 'package:mob1/Bloc/SocketIoBloc.dart';
 import 'package:mob1/Data/Models/Drink.dart';
 import 'package:mob1/UI/Screens/PaymentScreen.dart';
 import 'package:mob1/UI/widjets/BuyedProduct.dart';
@@ -40,7 +41,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
   Widget build(BuildContext context) {
     List<Drink> ListDrinks=Provider.of<Drinks>(context,listen: true).list;
     List<Product> buyedProductsList= Provider.of<BuyedProducts>(context,listen: true).list;
-     int Total=0;
+     double Total=0;
      buyedProductsList.forEach((element) {
        Drink  _drink=Provider.of<Drinks>(context,listen: true).getDrink(element.idBoisson);
        Total=Total+element.quantity*_drink.tarif;
@@ -190,7 +191,7 @@ class _BuyingScreenState extends State<BuyingScreen> {
                             ),
                             Row(
                               children: [
-                                Text("TOTAL : $Total DA",style: TextStyle(fontWeight: FontWeight.w800,fontSize: screenWidth/23,color: Colors.white),),
+                                Text("TOTAL : ${Total.toInt()} DA",style: TextStyle(fontWeight: FontWeight.w800,fontSize: screenWidth/23,color: Colors.white),),
 
                               ],
                             ),
@@ -231,7 +232,8 @@ class _BuyingScreenState extends State<BuyingScreen> {
                             ),
                             padding: EdgeInsets.symmetric(horizontal: screenWidth/20,vertical: screenHeight/100),
                             onPressed: (){
-                              Provider.of<QrCodeBloc>(context,listen: false).EncodeData(buyedProductsList);
+                              int idDistributeur=Provider.of<SocketIoBloc>(context,listen: false).idDistributeur;
+                              Provider.of<QrCodeBloc>(context,listen: false).EncodeData(buyedProductsList,idDistributeur,Total.toInt());
                               String _dataEncoded=Provider.of<QrCodeBloc>(context,listen: false).Dataencoded;
                               Navigator.pushReplacement(
                                 context,

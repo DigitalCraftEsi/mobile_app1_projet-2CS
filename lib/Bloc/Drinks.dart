@@ -7,8 +7,8 @@ class Drinks extends ChangeNotifier {
 
   List<Drink> get list => _listOfDrinks;
 
-  Future<void> LoadDrinks() async {
-    _listOfDrinks= await DrinkServices.getDrinks();
+  Future<void> LoadDrinks(String distUID) async {
+    _listOfDrinks= await DrinkServices.getDrinks(distUID);
     notifyListeners();
   }
   Drink getDrink(int id){

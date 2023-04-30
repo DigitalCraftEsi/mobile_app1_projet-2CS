@@ -7,7 +7,7 @@ class ProductCard extends StatelessWidget {
   final int id;
   final String img;
   final String name;
-  final int Price;
+  final double Price;
   @override
   Widget build(BuildContext context) {
     var ScreenWidth=MediaQuery.of(context).size.width;
@@ -58,7 +58,7 @@ class ProductCard extends StatelessWidget {
                             color: Color.fromRGBO(1, 113, 75, 1),
                             borderRadius: BorderRadius.all(Radius.circular(20))
                         ),
-                        child: Text('$Price DA',style: TextStyle(fontSize: ScreenWidth/40,fontWeight: FontWeight.w700,color: Colors.white),),
+                        child: Text('${Price.toInt()} DA',style: TextStyle(fontSize: ScreenWidth/40,fontWeight: FontWeight.w700,color: Colors.white),),
                       ),
 
                     ],

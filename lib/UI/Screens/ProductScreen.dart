@@ -150,7 +150,7 @@ class _MyAppState extends State<ProductScreen> {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10))),
                                     child:  Text(
-                                      "${_drink.tarif} DA",
+                                      "${_drink.tarif.toInt()} DA",
                                       style: TextStyle(
                                         fontSize: 27,
                                         fontWeight: FontWeight.w800,
@@ -165,8 +165,8 @@ class _MyAppState extends State<ProductScreen> {
                             alignment: Alignment.center,
                             margin: const EdgeInsets.only(
                                 top: 50, right: 70, left: 70, bottom: 30),
-                            child: const Text(
-                              "Lorem ipsum dolor sit amet constur Fringilla enim vitae sed vitae eget. Vel vel cras bibendum lectus scelerisque. ",
+                            child:  Text(
+                              "${_drink.description}",
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w400,
