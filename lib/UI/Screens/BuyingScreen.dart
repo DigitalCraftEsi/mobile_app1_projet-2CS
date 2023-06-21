@@ -12,6 +12,7 @@ import 'package:mob1/UI/widjets/ProductCard.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
+import 'EnterCodeScreen.dart';
 
 
 class BuyingScreen extends StatefulWidget {
@@ -93,11 +94,11 @@ class _BuyingScreenState extends State<BuyingScreen> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromRGBO(1, 113, 75, 1),
-          actions: [
-            Container(
-              margin: EdgeInsets.only(right: screenWidth/14),
+          appBar: AppBar(
+            backgroundColor: Color.fromRGBO(1, 113, 75, 1),
+            leadingWidth: 170,
+            leading:    Container(
+              margin: EdgeInsets.only(left: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -120,8 +121,16 @@ class _BuyingScreenState extends State<BuyingScreen> {
                 ],
               ),
             ),
-          ],
-        ),
+            actions: [
+              IconButton(onPressed: (){
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => EnterCodeScreen()),
+                );
+              }, icon: Icon(Icons.settings,color: Colors.white,size: 34,)),
+              SizedBox(width: 30,),
+            ],
+          ),
       body: SafeArea(
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

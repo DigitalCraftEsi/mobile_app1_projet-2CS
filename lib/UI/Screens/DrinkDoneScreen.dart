@@ -1,6 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mob1/Bloc/BuyedProducts.dart';
+import 'package:mob1/Bloc/SocketIoBloc.dart';
+import 'package:mob1/UI/Screens/BuyingScreen.dart';
+import 'package:mob1/main.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -12,6 +17,18 @@ class DrinkDoneScreen extends StatefulWidget {
 }
 
 class _MyAppState extends State<DrinkDoneScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+     Provider.of<BuyedProducts>(context,listen: false).initialise_List();
+    Future.delayed(Duration(seconds: 8), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => BuyingScreen()),
+      );
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     String _getDayOfWeek(int day) {

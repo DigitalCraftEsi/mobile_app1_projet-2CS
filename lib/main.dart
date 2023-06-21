@@ -6,17 +6,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mob1/Bloc/AddsBloc.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
 import 'package:mob1/Bloc/Drinks.dart';
 import 'package:mob1/Bloc/QrCodeBloc.dart';
 import 'package:mob1/Bloc/SocketIoBloc.dart';
+import 'package:mob1/Bloc/SocketIoDistBloc.dart';
 import 'package:mob1/Data/Services/DrinksService.dart';
 import 'package:mob1/UI/Screens/BuyingScreen.dart';
 import 'package:mob1/UI/Screens/DrinkDoneScreen.dart';
 import 'package:mob1/UI/Screens/PaymentDoneScreen.dart';
+import 'package:mob1/UI/Screens/StatisticsScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'Data/Models/Drink.dart';
+import 'UI/Screens/EnterCodeScreen.dart';
 import 'UI/Screens/PaymentScreen.dart';
 import 'UI/Screens/ProductScreen.dart';
 import 'UI/widjets/ProductCard.dart';
@@ -26,10 +30,11 @@ void main() {
   runApp(MultiProvider(child:MyApp(),
     providers: [
       ChangeNotifierProvider<SocketIoBloc>.value(value: SocketIoBloc()..connectToMachine()),
+      ChangeNotifierProvider<SocketIoDistBloc>.value(value: SocketIoDistBloc()..connectToMachine()),
       ChangeNotifierProvider<BuyedProducts>.value(value: BuyedProducts()),
       ChangeNotifierProvider<Drinks>.value(value: Drinks()),
       ChangeNotifierProvider<QrCodeBloc>.value(value: QrCodeBloc()),
-
+      ChangeNotifierProvider<AddsBloc>.value(value: AddsBloc()),
     ],
   ));
 }
@@ -45,7 +50,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'mob1',
       theme: ThemeData(fontFamily: 'Poppins'),
-      home:MyHomePage(),
+      home: MyHomePage(),
 
       debugShowCheckedModeBanner: false,
     );
@@ -73,19 +78,24 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print("1");
+    IO.Socket socketDist= Provider.of<SocketIoDistBloc>(context,listen: false).socket;
+    socketDist.on("code_event",(data) {
+      print("code $data");
+      Provider.of<SocketIoDistBloc>(context,listen: false).setCode(data);
+    } );
     IO.Socket socket= Provider.of<SocketIoBloc>(context,listen: false).socket;
     socket.on('idDistributeur', (data) {
       print('received message: $data');
       Provider.of<SocketIoBloc>(context,listen: false).setIdDistributeur(int.parse("${data["idDistributeur"]}"));
-
-      Provider.of<Drinks>(context,listen: false).LoadDrinks("232323").then((value){
+     int distUid=Provider.of<SocketIoBloc>(context,listen: false).uid;
+      Provider.of<Drinks>(context,listen: false).LoadDrinks("$distUid").then((value){
         setState(() {
           isloading=false;
         });
       });
     });
     Provider.of<SocketIoBloc>(context,listen: false).onError();
-
     print("4");
     /*Provider.of<Drinks>(context,listen: false).LoadDrinks().then((value){
       setState(() {
@@ -155,31 +165,39 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(1, 113, 75, 1),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: screenWidth/14),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("$today",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 11),),
-                    Text("$todayDate",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 11),),
-                  ],
+        leadingWidth: 170,
+        leading:    Container(
+          margin: EdgeInsets.only(left: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("$today",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 11),),
+                  Text("$todayDate",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 11),),
+                ],
 
-                ),
-                VerticalDivider(
-                  thickness: screenWidth/360,
-                  color: Colors.white,
-                  indent: 15,
-                  endIndent: 15,
-                ),
+              ),
+              VerticalDivider(
+                thickness: screenWidth/360,
+                color: Colors.white,
+                indent: 15,
+                endIndent: 15,
+              ),
 
-                Text("${hour}:${minute}",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
-              ],
-            ),
+              Text("${hour}:${minute}",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18),),
+            ],
           ),
+        ),
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => EnterCodeScreen()),
+            );
+          }, icon: Icon(Icons.settings,color: Colors.white,size: 34,)),
+          SizedBox(width: 30,),
         ],
       ),
       body: isloading?Center(

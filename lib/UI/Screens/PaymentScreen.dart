@@ -1,15 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mob1/Bloc/BuyedProducts.dart';
 import 'package:mob1/Bloc/QrCodeBloc.dart';
 import 'package:mob1/Bloc/SocketIoBloc.dart';
+import 'package:mob1/Bloc/SocketIoDistBloc.dart';
 import 'package:mob1/UI/Screens/PaymentDoneScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({Key? key, required this.dataEncoded}) : super(key: key);
@@ -22,39 +24,46 @@ class _MyAppState extends State<PaymentScreen> {
    @override
  void initState() {
      IO.Socket socket= Provider.of<SocketIoBloc>(context,listen: false).socket;
+     IO.Socket socketDist= Provider.of<SocketIoDistBloc>(context,listen: false).socket;
      socket.on('prepare-beverages', (data) {
        print(data);
-       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-           content: Text('Prepare boisson : ${data[0]["nomBoisson"]}',style: TextStyle(fontSize: 25),),
-           duration: Duration(seconds: 3),
-           backgroundColor:Color.fromRGBO(1, 113, 75, 1),
-           action: SnackBarAction(
-             label: '',
-             onPressed: () {
-               // Perform some action
-             },
-           ),
-         ),
+       print(jsonEncode(data));
+       socketDist.emit("prepare-beverage",jsonEncode(data));
+       Navigator.pushReplacement(
+         context,
+         MaterialPageRoute(builder: (context) => PaymentDoneScreen()),
        );
-       Timer(Duration(seconds: 5), (){
-         socket.emitWithAck("preparation-done",null,ack: (){
-           print("ack sent");
-         });
-         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
-             content: Text('Preparation done',style: TextStyle(fontSize: 25),),
-             duration: Duration(seconds: 3),
-             backgroundColor: Color.fromRGBO(1, 113, 75, 1),
-             action: SnackBarAction(
-               label: '',
-               onPressed: () {
-                 // Perform some action
-               },
-             ),
-           ),
-         );
-       });
+       // ScaffoldMessenger.of(context).showSnackBar(
+       //   SnackBar(
+       //     content: Text('Prepare boisson : ${data[0]["nomBoisson"]}',style: TextStyle(fontSize: 25),),
+       //     duration: Duration(seconds: 3),
+       //     backgroundColor:Color.fromRGBO(1, 113, 75, 1),
+       //     action: SnackBarAction(
+       //       label: '',
+       //       onPressed: () {
+       //         // Perform some action
+       //       },
+       //     ),
+       //   ),
+       // );
+       // Timer(Duration(seconds: 5), (){
+       //   socket.emitWithAck("preparation-done",null,ack: (){
+       //     print("ack sent");
+       //   });
+       //   ScaffoldMessenger.of(context).showSnackBar(
+       //     SnackBar(
+       //       content: Text('Preparation done',style: TextStyle(fontSize: 25),),
+       //       duration: Duration(seconds: 3),
+       //       backgroundColor: Color.fromRGBO(1, 113, 75, 1),
+       //       action: SnackBarAction(
+       //         label: '',
+       //         onPressed: () {
+       //           // Perform some action
+       //         },
+       //       ),
+       //     ),
+       //   );
+       // });
 
      });
     super.initState();

@@ -10,18 +10,18 @@ class SocketIoBloc extends ChangeNotifier {
   late IO.Socket socket;
   late bool isloading;
   late int idDistributeur;
-
+  int uid=3;
   void setIdDistributeur(int idDistributeur){
    this.idDistributeur=idDistributeur;
     notifyListeners();
   }
   void connectToMachine() {
-    socket = IO.io('http://192.168.43.185:8000', OptionBuilder()
+    socket = IO.io('https://smartbevdb-sil-rhap.onrender.com', OptionBuilder()
         .setTransports(['websocket'])
         .disableAutoConnect() // for Flutter or Dart VM// disable auto-connection
         .setExtraHeaders({'auth':jsonEncode({'type': 'DISTRIBUTEUR',
       "payload":{
-        "distUid":"232323"
+        "distUID":"$uid"
       }
     })})// optional
         .build()

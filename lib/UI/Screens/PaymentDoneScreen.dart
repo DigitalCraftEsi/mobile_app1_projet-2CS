@@ -1,7 +1,14 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mob1/Bloc/AddsBloc.dart';
+import 'package:mob1/Bloc/SocketIoBloc.dart';
+import 'package:mob1/Bloc/SocketIoDistBloc.dart';
 import 'package:mob1/UI/Screens/DrinkDoneScreen.dart';
+import 'package:provider/provider.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
 
 
 
@@ -13,15 +20,39 @@ class PaymentDoneScreen extends StatefulWidget {
 }
 
 class _MyAppState extends State<PaymentDoneScreen> {
+  bool isloading=true;
+  Map<String,dynamic>  data={};
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 8), () {
+    // Future.delayed(Duration(seconds: 5), () {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => DrinkDoneScreen()),
+    //   );
+    // });
+    super.initState();
+    Provider.of<AddsBloc>(context,listen: false).getAdd(picture: File("lib/UI/assets/images/img_2.png"), distUid: "2").then((value){
+      setState(() {
+        isloading=false;
+        data=Provider.of<AddsBloc>(context,listen: false).data;
+        print("data $data");
+        print(data.isEmpty);
+      });
+    });
+
+    IO.Socket socket= Provider.of<SocketIoBloc>(context,listen: false).socket;
+    IO.Socket socketDist= Provider.of<SocketIoDistBloc>(context,listen: false).socket;
+    socketDist.on("response_event",(data){
+      print("hhh $data");
+      socket.emitWithAck("preparation-done",null,ack: (){
+        print("ack sent");
+      });
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => DrinkDoneScreen()),
       );
     });
-    super.initState();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -112,36 +143,47 @@ class _MyAppState extends State<PaymentDoneScreen> {
                 width: 500,
                 child: Center(
                   child: Container(
-                    margin: const EdgeInsets.only(top: 30, bottom: 30),
+                    margin: const EdgeInsets.only(top: 30),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: isloading?MainAxisAlignment.center:MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Container(
-                          margin: const EdgeInsets.only( bottom:30),
-                          child: Image.asset(
-                            "lib/UI/assets/images/img_2.png",
-                            height: 150,
-                            width: 150,
-                          ),
+
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only( bottom:30),
+                              child: Image.asset(
+                                "lib/UI/assets/images/img_2.png",
+                                height: 150,
+                                width: 150,
+                              ),
+                            ),
+                            const Text(
+                              "Payment processed",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins',
+                                color: Colors.black,
+                              ),
+                            ),
+                            const Text(
+                              "Your Drink will be ready in a moment",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Poppins',
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                        const Text(
-                          "Payment processed",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins',
-                            color: Colors.black,
-                          ),
-                        ),
-                        const Text(
-                          "Your Drink will be ready in a moment",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Poppins',
-                            color: Colors.black,
-                          ),
-                        ),
+                        isloading?Container():(data.isEmpty?Container(
+                          child: Image.network("https://th.bing.com/th/id/OIP.SJBBH0TFHFSdiuR718pfxQHaFh?pid=ImgDet&rs=1",)):data["data"]["link"]==null?Container(
+                        child: Image.network("https://fiverr-res.cloudinary.com/videos/so_11.219035,t_main1,q_auto,f_auto/flfffyyj4wleq0ugwj5l/place-your-logo-and-text-in-this-coffee-advert.png")):Container(
+                          child: Image.network("${data["data"]["link"]}"),
+                        ))
                       ],
                     ),
                   ),
@@ -150,7 +192,7 @@ class _MyAppState extends State<PaymentDoneScreen> {
             ),
           ),
         ),
-      
+
     );
   }
 }
