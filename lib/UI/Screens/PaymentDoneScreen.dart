@@ -17,6 +17,8 @@ class PaymentDoneScreen extends StatefulWidget {
 
   @override
   State<PaymentDoneScreen> createState() => _MyAppState();
+  // final CameraDescription camera;
+  // final
 }
 
 class _MyAppState extends State<PaymentDoneScreen> {
@@ -24,12 +26,15 @@ class _MyAppState extends State<PaymentDoneScreen> {
   Map<String,dynamic>  data={};
   @override
   void initState() {
-    // Future.delayed(Duration(seconds: 5), () {
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => DrinkDoneScreen()),
-    //   );
-    // });
+    Future.delayed(Duration(seconds: 90), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => DrinkDoneScreen()),
+      );
+    });
+    // _controller = CameraController(
+    //   widget.camera,
+    // );
     super.initState();
     Provider.of<AddsBloc>(context,listen: false).getAdd(picture: File("lib/UI/assets/images/img_2.png"), distUid: "2").then((value){
       setState(() {
@@ -39,6 +44,33 @@ class _MyAppState extends State<PaymentDoneScreen> {
         print(data.isEmpty);
       });
     });
+
+    //final image = await _controller.takePicture();
+    //final imageFile = File(image.path);
+    /*
+    final url = Uri.parse('https://age-gender-ad.onrender.com/detect');
+  final request = http.MultipartRequest('POST', url);
+
+  // Add the image file to the request as a file field
+  request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+  try {
+    // Send the request
+    final response = await request.send();
+
+    // Check the response status
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully');
+      print(response.body.data['data']['link']);
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error uploading image: $e');
+  }
+}
+     */
+
 
     IO.Socket socket= Provider.of<SocketIoBloc>(context,listen: false).socket;
     IO.Socket socketDist= Provider.of<SocketIoDistBloc>(context,listen: false).socket;

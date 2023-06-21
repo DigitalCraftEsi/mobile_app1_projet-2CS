@@ -25,7 +25,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
     super.initState();
     socketDist=Provider.of<SocketIoDistBloc>(context,listen: false).socket;
   }
- 
+
   @override
   Widget build(BuildContext context) {
     String _getDayOfWeek(int day) {

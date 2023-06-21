@@ -290,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
                          SizedBox(
                            width: screenWidth/40,
                          ),
-                         Text("TOUCH ANYWHERE TO START",style: TextStyle(fontWeight: FontWeight.w800,fontSize: screenWidth/25,color: Colors.white),)
+                         Text("TOUCH HERE TO START",style: TextStyle(fontWeight: FontWeight.w800,fontSize: screenWidth/25,color: Colors.white),)
                        ],
                      )
 
