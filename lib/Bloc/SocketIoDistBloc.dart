@@ -19,7 +19,7 @@ class SocketIoDistBloc extends ChangeNotifier {
      notifyListeners();
    }
   void connectToMachine() {
-    socket = IO.io('http://192.168.201.154:8080', OptionBuilder()
+    socket = IO.io('http://192.168.42.16:8080', OptionBuilder()
         .setTransports(['websocket'])
         .disableAutoConnect() // for Flutter or Dart VM// disable auto-connection// optional
         .build()
